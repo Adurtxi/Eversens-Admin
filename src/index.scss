@@ -1,0 +1,21 @@
+body {
+  display: block;
+  margin: 0;
+}
+
+// BEGIN: mui-components
+@mixin mui-base-component {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  padding: 16px;
+}
+
+.button {
+  @include mui-base-component;
+  // additional button styles...
+}
+
+.card {
+  @include mui-base-component;
+  // additional card styles...
+}
