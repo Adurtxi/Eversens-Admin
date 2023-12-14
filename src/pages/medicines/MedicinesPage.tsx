@@ -90,7 +90,7 @@ export default function MedicinesPage(): JSX.Element {
     console.log(values)
   }
 
-  const filters: Filter[] = [
+  const filters: (Filter | { divider: boolean })[] = [
     {
       new: false,
       key: 'inUse',
@@ -111,6 +111,7 @@ export default function MedicinesPage(): JSX.Element {
       icon: <IconLetterN />,
       static: false
     },
+    { divider: true },
     {
       new: true,
       key: 'createdAtStartDate',
@@ -131,6 +132,7 @@ export default function MedicinesPage(): JSX.Element {
       icon: <IconCalendarTime />,
       static: false
     },
+    { divider: true },
     {
       new: true,
       key: 'updatedAtStartDate',

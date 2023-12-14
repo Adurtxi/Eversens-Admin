@@ -1,4 +1,4 @@
-import { Box, Chip, Fade, ListItemIcon, Menu, MenuItem, Stack } from '@mui/material'
+import { Box, Chip, Divider, Fade, ListItemIcon, Menu, MenuItem, Stack } from '@mui/material'
 import { IconEdit, IconPlus } from '@tabler/icons-react'
 import { ReactElement, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -17,7 +17,7 @@ export interface Filter {
 }
 
 interface FiltersProps {
-  filters: Filter[]
+  filters: (Filter | { divider: boolean })[]
   selectedFilters: Filter[]
   handleFilterDelete: (key: string) => void
   handleUpdateSelectedFilters: (filter: Filter) => void
@@ -41,7 +41,10 @@ const Filters = ({ filters, selectedFilters, handleFilterDelete, handleUpdateSel
   const handleOpenDialog = () => setOpen(true)
   const handleCloseDialog = () => setOpen(false)
 
-  const notUsingFilters = filters.filter(filter => !selectedFilters.some(selectedFilter => selectedFilter.key === filter.key))
+  const notUsingFilters = filters.filter(filter => {
+    if ('divider' in filter) return true
+    return !selectedFilters.some(selectedFilter => selectedFilter.key === filter.key)
+  })
 
   return <>
     <Stack direction='row' alignItems='center' justifyContent='space-between' gap={1}>
@@ -72,26 +75,28 @@ const Filters = ({ filters, selectedFilters, handleFilterDelete, handleUpdateSel
       />
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose} TransitionComponent={Fade}>
         <Box onMouseLeave={handleMenuClose}>
-          {notUsingFilters.map((filter: Filter) => (
-            <MenuItem key={`menu-${filter.key}`}
-              onClick={() => {
-                handleSelectFilterAndOpenDialog(filter)
-                handleMenuClose()
-              }}
-            >
-              <ListItemIcon>{filter.icon}</ListItemIcon>
-              {filter.label}
-            </MenuItem>
-          ))}
+          {notUsingFilters.map((filter: Filter | { divider: boolean }, index: number) => {
+            return ('divider' in filter) 
+            ? <Divider key={`filter-divider-${index}`}/>
+            : <MenuItem key={`menu-${filter.key}`}
+                onClick={() => {
+                  handleSelectFilterAndOpenDialog(filter);
+                  handleMenuClose();
+                }}
+              >
+                <ListItemIcon>{filter.icon}</ListItemIcon>
+                {filter.label}
+              </MenuItem>
+          })}
         </Box>
       </Menu>
     </Stack>
     {
-      selectedFilter && <FilterDialog 
-        filter={selectedFilter} 
-        handleUpdateSelectedFilters={handleUpdateSelectedFilters} 
-        open={open} 
-        handleClose={handleCloseDialog} 
+      selectedFilter && <FilterDialog
+        filter={selectedFilter}
+        handleUpdateSelectedFilters={handleUpdateSelectedFilters}
+        open={open}
+        handleClose={handleCloseDialog}
       />
     }
   </>

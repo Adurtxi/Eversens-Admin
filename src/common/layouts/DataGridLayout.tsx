@@ -14,7 +14,7 @@ interface DataGridLayoutProps {
     onButtonClick: () => void
   }
   onSearchClick: (values: {[x: string]: string | number | boolean | Date | null}) => void
-  filters: Filter[]
+  filters:  (Filter | { divider: boolean })[]
   dataGridConfig: {
     rows: any[]
     columns: any[]
@@ -30,7 +30,7 @@ export default function DataGridLayout({ pageName, button, filters, dataGridConf
   const { rows, columns, actions, error, isLoading } = dataGridConfig
 
   const [selectedFilters, setSelectedFilters] = useState<Filter[] | []>(
-    filters.filter((filter: Filter) => filter.static) ?? []
+    filters.filter((x: Filter | { divider: boolean }) => 'static' in x && x.static && x) as Filter[] ?? []
   )
 
   const handleUpdateSelectedFilters = (filter: Filter): void => {
