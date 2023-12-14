@@ -10,7 +10,7 @@ import { IconHome, IconUsersGroup, IconMedicineSyrup, IconChevronLeft, IconMedic
 import { toggleSidebar, toggleSubmenu } from '@/redux/sidebar.slice'
 import { RootState } from '@/redux/store'
 import { useDispatch, useSelector } from 'react-redux'
-import { drawerWidth } from '../constants/sizes'
+import { drawerWidth } from '../../constants/sizes'
 
 const CustomDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({

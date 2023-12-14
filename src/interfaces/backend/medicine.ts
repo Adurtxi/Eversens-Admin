@@ -1,4 +1,4 @@
-import { AuditInfo } from "./audit-info"
+import { AuditInfo } from './audit-info'
 
 export class Medicine {
   name: string = ''

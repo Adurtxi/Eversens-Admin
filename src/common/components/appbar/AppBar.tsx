@@ -9,7 +9,7 @@ import { IconMenu, IconSettings, IconLogout, IconMoonFilled, IconSunFilled, Icon
 import { useOpenCloseAppBar } from '@/hooks/use-open-close-app-bar'
 import { selectIsOpen, toggleSidebar } from '@/redux/sidebar.slice'
 import { useLogout } from '@/hooks/use-logout'
-import { drawerWidth } from '../constants/sizes'
+import { drawerWidth } from '../../constants/sizes'
 import { toggleTheme } from '@/redux/configuration.slice'
 
 import logoImage from '@/assets/img/logo.png'

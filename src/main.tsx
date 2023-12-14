@@ -1,6 +1,9 @@
 // import React from 'react'
 import ReactDOM from 'react-dom/client'
 
+import dayjs from 'dayjs'
+import 'dayjs/locale/es'
+
 import './index.scss'
 import '@fontsource/roboto/300.css'
 import '@fontsource/roboto/400.css'
@@ -13,6 +16,8 @@ import { Provider } from 'react-redux'
 import { CssBaseline } from '@mui/material'
 
 import { store } from './redux/store.ts'
+
+dayjs.locale('es')
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   // <React.StrictMode>

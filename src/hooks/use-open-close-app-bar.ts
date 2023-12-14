@@ -1,8 +1,8 @@
-import * as React from 'react'
+import { useState } from 'react'
 
 export const useOpenCloseAppBar = () => {
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null)
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
+  const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null)
+  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(
     null
   )
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {

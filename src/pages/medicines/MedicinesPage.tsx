@@ -1,17 +1,17 @@
 import { Add } from '@mui/icons-material'
 import { GridRowParams } from '@mui/x-data-grid'
-import { IconEdit, IconEye, IconTrash } from '@tabler/icons-react'
+import { IconCalendarTime, IconCheck, IconEdit, IconEye, IconLetterN, IconTrash } from '@tabler/icons-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import DataGridLayout from '@/common/layouts/DataGridLayout'
-import { GridAction, ExtendedGridColDef } from '@/common/layouts/data-grid/DataGrid'
+import { GridAction, ExtendedGridColDef } from '@/common/components/data-grid/DataGrid'
 import { Medicine } from '@/interfaces/backend/medicine'
 import { getMedicines } from '@/services/medicine/medicine.service'
 import { NewMedicineDialog } from './components/NewMedicineDialog'
 import { useQuery } from '@tanstack/react-query'
 import { EditMedicineDialog } from './components/EditMedicineDialog'
-import MyDateTimePicker from '@/common/components/date/DatePicker'
+import { Filter } from '@/common/components/filters/Filters'
 
 export default function MedicinesPage(): JSX.Element {
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
@@ -86,9 +86,72 @@ export default function MedicinesPage(): JSX.Element {
     inUse: true,
   }))
 
-  const onSearchClick = () => {
-    console.log(1)
+  const onSearchClick = (values: any) => {
+    console.log(values)
   }
+
+  const filters: Filter[] = [
+    {
+      new: false,
+      key: 'inUse',
+      label: t('medicines.filters.in_use'),
+      type: 'boolean',
+      urlKey: 'inUse',
+      value: 'true',
+      icon: <IconCheck />,
+      static: true
+    },
+    {
+      new: true,
+      key: 'name',
+      label: t('medicines.filters.name'),
+      type: 'text',
+      urlKey: 'name',
+      value: '',
+      icon: <IconLetterN />,
+      static: false
+    },
+    {
+      new: true,
+      key: 'createdAtStartDate',
+      label: t('medicines.filters.created_at_start_date'),
+      type: 'date',
+      urlKey: 'createdAtStartDate',
+      value: new Date(),
+      icon: <IconCalendarTime />,
+      static: false
+    },
+    {
+      new: true,
+      key: 'createdAtEndDate',
+      label: t('medicines.filters.created_at_end_date'),
+      type: 'date',
+      urlKey: 'createdAtEndDate',
+      value: new Date(),
+      icon: <IconCalendarTime />,
+      static: false
+    },
+    {
+      new: true,
+      key: 'updatedAtStartDate',
+      label: t('medicines.filters.updated_at_start_date'),
+      type: 'date',
+      urlKey: 'updatedAtStartDate',
+      value: new Date(),
+      icon: <IconCalendarTime />,
+      static: false
+    },
+    {
+      new: true,
+      key: 'updatedAtEndDate',
+      label: t('medicines.filters.updated_at_end_date'),
+      type: 'date',
+      urlKey: 'updatedAtEndDate',
+      value: new Date(),
+      icon: <IconCalendarTime />,
+      static: false
+    }
+  ]
 
   return (
     <>
@@ -101,9 +164,7 @@ export default function MedicinesPage(): JSX.Element {
           onButtonClick: handleCreateDialogOpen,
         }}
         dataGridConfig={{ rows, columns, actions, error, isLoading }}
-        filters={
-          [<MyDateTimePicker key={'startDate'} />]
-        }
+        filters={filters}
       />
       <NewMedicineDialog open={createDialogOpen} handleClose={handleCreateDialogClose} />
       {selectedMedicine && <EditMedicineDialog open={editDialogOpen} medicine={selectedMedicine} handleClose={handleEditDialogClose} />}
