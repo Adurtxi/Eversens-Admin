@@ -1,17 +1,20 @@
 import { Add } from '@mui/icons-material'
 import { GridRowParams } from '@mui/x-data-grid'
-import { IconCalendarTime, IconCheck, IconEdit, IconEye, IconLetterN, IconTrash } from '@tabler/icons-react'
+import { IconCalendarTime, IconCheck, IconEdit, IconEye, IconLetterN, IconTrash, IconUserCheck, IconUserPlus } from '@tabler/icons-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import DataGridLayout from '@/common/layouts/DataGridLayout'
 import { GridAction, ExtendedGridColDef } from '@/common/components/data-grid/DataGrid'
 import { Medicine } from '@/interfaces/backend/medicine'
-import { getMedicines } from '@/services/medicine/medicine.service'
+import { findAllMedicines } from '@/services/medicine/medicine.service'
 import { NewMedicineDialog } from './components/NewMedicineDialog'
 import { useQuery } from '@tanstack/react-query'
 import { EditMedicineDialog } from './components/EditMedicineDialog'
 import { Filter } from '@/common/components/filters/Filters'
+import { User } from '@/interfaces/backend/user'
+import { findAllUsers } from '@/services/user/user.service'
+import { SelectorValue } from '@/common/components/dialog/FilterFieldDialog'
 
 export default function MedicinesPage(): JSX.Element {
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
@@ -30,10 +33,18 @@ export default function MedicinesPage(): JSX.Element {
 
   const { t } = useTranslation()
 
-  const { data, isLoading, error } = useQuery<Medicine[], Error>(
+  const { data: users, isLoading: isUsersLoading, error: usersError } = useQuery<User[], Error>(
+    {
+      queryKey: ['getUsers'],
+      queryFn: () => findAllUsers({}),
+      refetchOnWindowFocus: false
+    }
+  )
+
+  const { data: medicines, isLoading: isMedicinesLoading, error: medicinesError } = useQuery<Medicine[], Error>(
     {
       queryKey: ['getMedicines'],
-      queryFn: getMedicines,
+      queryFn: findAllMedicines,
       refetchOnWindowFocus: false
     }
   )
@@ -77,7 +88,7 @@ export default function MedicinesPage(): JSX.Element {
     { field: 'inUse', headerName: t('medicines.datagrid.columns.in_use'), flex: 1 },
   ]
 
-  const rows: any = data?.map(x => ({
+  const rows: any = medicines?.map((x: Medicine) => ({
     ...x,
     createdBy: x.auditInfo.createdBy?.username,
     createdAt: x.auditInfo.createdAt,
@@ -90,6 +101,7 @@ export default function MedicinesPage(): JSX.Element {
     console.log(values)
   }
 
+  const professionals = users?.map((user: User) => ({ id: user.id, label: user.username }) as SelectorValue) ?? []
   const filters: (Filter | { divider: boolean })[] = [
     {
       new: false,
@@ -109,6 +121,29 @@ export default function MedicinesPage(): JSX.Element {
       urlKey: 'name',
       value: '',
       icon: <IconLetterN />,
+      static: false
+    },
+    { divider: true },
+    {
+      new: true,
+      key: 'createdBy',
+      label: t('medicines.filters.created_by'),
+      type: 'select',
+      selectorValues: professionals,
+      urlKey: 'createdBy',
+      value: '',
+      icon: <IconUserPlus />,
+      static: false
+    },
+    {
+      new: true,
+      key: 'updatedBy',
+      label: t('medicines.filters.updated_by'),
+      type: 'select',
+      selectorValues: professionals,
+      urlKey: 'updatedBy',
+      value: '',
+      icon: <IconUserCheck />,
       static: false
     },
     { divider: true },
@@ -164,9 +199,10 @@ export default function MedicinesPage(): JSX.Element {
           text: t('medicines.add_medicine'),
           icon: <Add />,
           onButtonClick: handleCreateDialogOpen,
-        }}
-        dataGridConfig={{ rows, columns, actions, error, isLoading }}
-        filters={filters}
+          disabled: isMedicinesLoading
+        }} 
+        filtersConfig={{ filters, isLoading: isUsersLoading, error: usersError }}
+        dataGridConfig={{ rows, columns, actions, error: medicinesError, isLoading: isMedicinesLoading }}
       />
       <NewMedicineDialog open={createDialogOpen} handleClose={handleCreateDialogClose} />
       {selectedMedicine && <EditMedicineDialog open={editDialogOpen} medicine={selectedMedicine} handleClose={handleEditDialogClose} />}

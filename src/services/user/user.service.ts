@@ -1,5 +1,5 @@
 import { User } from '@/interfaces/backend/user'
-import { getEntity, postEntity } from '../api.service'
+import { getEntity, postEntity, toQueryString } from '../api.service'
 
 export const postLogin = async (
   username: string,
@@ -11,6 +11,10 @@ export const postLogin = async (
   })
 }
 
+export const findAllUsers = async (params: Record<string, any>): Promise<User[]> => {
+  return await getEntity(`users/professionals/` + toQueryString(params))
+}
+
 export const findUserById = async (id: string): Promise<User> => {
-  return getEntity(`users/${id}`)
+  return await getEntity(`users/${id}`)
 }

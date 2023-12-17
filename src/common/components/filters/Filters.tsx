@@ -4,6 +4,7 @@ import { ReactElement, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { FilterDialog } from './components/FilterDialog'
+import { SelectorValue } from '../dialog/FilterFieldDialog'
 
 export interface Filter {
   new: boolean
@@ -14,16 +15,19 @@ export interface Filter {
   value: string | number | boolean | null | Date
   icon: ReactElement
   static: boolean
+  selectorValues?: SelectorValue[]
 }
 
 interface FiltersProps {
   filters: (Filter | { divider: boolean })[]
+  isFiltersLoading: boolean
   selectedFilters: Filter[]
   handleFilterDelete: (key: string) => void
   handleUpdateSelectedFilters: (filter: Filter) => void
+  selectorValues?: SelectorValue[]
 }
 
-const Filters = ({ filters, selectedFilters, handleFilterDelete, handleUpdateSelectedFilters }: FiltersProps) => {
+const Filters = ({ filters, isFiltersLoading, selectedFilters, handleFilterDelete, handleUpdateSelectedFilters }: FiltersProps) => {
   const { t } = useTranslation()
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -46,7 +50,7 @@ const Filters = ({ filters, selectedFilters, handleFilterDelete, handleUpdateSel
     return !selectedFilters.some(selectedFilter => selectedFilter.key === filter.key)
   })
 
-  return <>
+  return !isFiltersLoading ? <>
     <Stack direction='row' alignItems='center' justifyContent='space-between' gap={1}>
       {selectedFilters.filter(x => x.static).map((filter: Filter) => {
         return <Chip key={filter.key}
@@ -76,9 +80,9 @@ const Filters = ({ filters, selectedFilters, handleFilterDelete, handleUpdateSel
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose} TransitionComponent={Fade}>
         <Box onMouseLeave={handleMenuClose}>
           {notUsingFilters.map((filter: Filter | { divider: boolean }, index: number) => {
-            return ('divider' in filter) 
-            ? <Divider key={`filter-divider-${index}`}/>
-            : <MenuItem key={`menu-${filter.key}`}
+            return ('divider' in filter)
+              ? <Divider key={`filter-divider-${index}`} />
+              : <MenuItem key={`menu-${filter.key}`}
                 onClick={() => {
                   handleSelectFilterAndOpenDialog(filter);
                   handleMenuClose();
@@ -100,6 +104,7 @@ const Filters = ({ filters, selectedFilters, handleFilterDelete, handleUpdateSel
       />
     }
   </>
+  : <Box> {t('common.loading')}</Box>
 }
 
 export default Filters

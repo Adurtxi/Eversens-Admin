@@ -12,9 +12,14 @@ interface DataGridLayoutProps {
     text: string
     icon: ReactElement
     onButtonClick: () => void
+    disabled?: boolean
   }
-  onSearchClick: (values: {[x: string]: string | number | boolean | Date | null}) => void
-  filters:  (Filter | { divider: boolean })[]
+  onSearchClick: (values: { [x: string]: string | number | boolean | Date | null }) => void
+  filtersConfig: {
+    filters: (Filter | { divider: boolean })[],
+    isLoading: boolean,
+    error: Error | null
+  }
   dataGridConfig: {
     rows: any[]
     columns: any[]
@@ -24,17 +29,18 @@ interface DataGridLayoutProps {
   }
 }
 
-export default function DataGridLayout({ pageName, button, filters, dataGridConfig, onSearchClick }: DataGridLayoutProps): JSX.Element {
+export default function DataGridLayout({ pageName, button, filtersConfig, dataGridConfig, onSearchClick }: DataGridLayoutProps): JSX.Element {
   const { t } = useTranslation()
 
-  const { rows, columns, actions, error, isLoading } = dataGridConfig
+  const { rows, columns, actions, error, isLoading: isDataGridLoading } = dataGridConfig
+  const { filters, isLoading: isFiltersLoading } = filtersConfig
 
   const [selectedFilters, setSelectedFilters] = useState<Filter[] | []>(
     filters.filter((x: Filter | { divider: boolean }) => 'static' in x && x.static && x) as Filter[] ?? []
   )
 
   const handleUpdateSelectedFilters = (filter: Filter): void => {
-    if (!filter.new) 
+    if (!filter.new)
       setSelectedFilters(selectedFilters.map((selectedFilter: Filter) => selectedFilter.key === filter.key ? filter : selectedFilter))
     else {
       filter.new = false
@@ -45,7 +51,7 @@ export default function DataGridLayout({ pageName, button, filters, dataGridConf
   const handleFilterDelete = (key: string): void => {
     setSelectedFilters(
       selectedFilters.filter((filter: Filter) => filter.key !== key
-    ))
+      ))
   }
   const handleOnSearchClick = () => {
     const filterValues = selectedFilters.reduce(
@@ -57,26 +63,27 @@ export default function DataGridLayout({ pageName, button, filters, dataGridConf
 
   return (
     <Container sx={{ mt: 3 }}>
-      <Stack direction='row' alignItems='center' justifyContent='space-between' mb={3}>
+      <Stack direction='row' alignItems='center' justifyContent='space-between' mb={4}>
         <Typography variant='h4'>{pageName}</Typography>
-        <Button variant='contained' startIcon={button.icon} onClick={button.onButtonClick}>
+        <Button variant='contained' startIcon={button.icon} onClick={button.onButtonClick} disabled={button.disabled}>
           {button.text}
         </Button>
       </Stack>
 
+      <Stack direction='row' alignItems='center' justifyContent='space-between' mb={1}>
+        <Filters
+          filters={filters}
+          isFiltersLoading={isFiltersLoading}
+          selectedFilters={selectedFilters}
+          handleFilterDelete={handleFilterDelete}
+          handleUpdateSelectedFilters={handleUpdateSelectedFilters}
+        />
+        <Button variant='contained' color='secondary' startIcon={<IconSearch />} onClick={handleOnSearchClick} disabled={isDataGridLoading}>
+          {t('common.search')}
+        </Button>
+      </Stack>
       <Card sx={{ p: 1 }}>
-        <Stack direction='row' alignItems='center' justifyContent='space-between' mb={1}>
-          <Filters 
-            filters={filters} 
-            selectedFilters={selectedFilters} 
-            handleFilterDelete={handleFilterDelete} 
-            handleUpdateSelectedFilters={handleUpdateSelectedFilters}
-          />
-          <Button variant='contained' color='secondary' startIcon={<IconSearch/>} onClick={handleOnSearchClick}>
-            { t('common.search') }
-          </Button>
-        </Stack>
-        <MyDataGrid rows={rows} columns={columns} actions={actions} error={error} isLoading={isLoading} />
+        <MyDataGrid rows={rows} columns={columns} actions={actions} error={error} isLoading={isDataGridLoading} />
       </Card>
     </Container>
   )

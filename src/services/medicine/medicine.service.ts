@@ -1,7 +1,7 @@
 import { Medicine } from '@/interfaces/backend/medicine'
 import { getEntity, postEntity, putEntity } from '../api.service'
 
-export const getMedicines = async (): Promise<Medicine[]> => {
+export const findAllMedicines = async (): Promise<Medicine[]> => {
   return await getEntity<Medicine[]>('admin/medicines')
 }
 

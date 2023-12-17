@@ -46,6 +46,7 @@ export const FilterDialog = ({ open, handleClose, filter, handleUpdateSelectedFi
     type={filter.type}
     fieldName='filterValue'
     label={filter.label}
+    selectorValues={filter.selectorValues}
     buttonText={(filter.new) ? t('common.add') : t('common.update')}
   />
 }

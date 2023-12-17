@@ -47,8 +47,8 @@ const FormikBooleanField: React.FC<BooleanFieldProps> = ({ formik, fieldName, t 
 interface SelectFieldProps extends TextFieldProps {
   selectorValues: SelectorValue[]
 }
-interface SelectorValue {
-  value: string
+export interface SelectorValue {
+  id: string,
   label: string
 }
 const FormikSelectField: React.FC<SelectFieldProps> = ({ formik, fieldName, label, selectorValues }) => (
@@ -58,9 +58,11 @@ const FormikSelectField: React.FC<SelectFieldProps> = ({ formik, fieldName, labe
     value={formik.values[fieldName]}
     onChange={formik.handleChange}
     onBlur={formik.handleBlur}
+    fullWidth
+    size='small'
   >
     {selectorValues?.map((selectorValue: SelectorValue) => (
-      <MenuItem key={selectorValue.value} value={selectorValue.value}>{selectorValue.label}</MenuItem>
+      <MenuItem key={selectorValue.id} value={selectorValue.id}>{selectorValue.label}</MenuItem>
     ))}
   </Select>
 )

@@ -21,6 +21,7 @@ export const es = {
       info: 'Información',
       required: 'Requerido',
       optional: 'Opcional',
+      loading: 'Cargando...',
     },
     datagrid: {
       loading: 'Cargando...',
