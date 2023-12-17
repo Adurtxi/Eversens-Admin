@@ -17,12 +17,14 @@ import { findAllUsers } from '@/services/user/user.service'
 import { SelectorValue } from '@/common/components/dialog/FilterFieldDialog'
 
 export default function MedicinesPage(): JSX.Element {
+  const [searchParams, setSearchParams] = useState<Record<string, any> | any>({})
+
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
   const handleCreateDialogOpen = () => setCreateDialogOpen(true)
   const handleCreateDialogClose = () => setCreateDialogOpen(false)
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [selectedMedicine, setSelectedMedicine] = useState<Medicine | null>(null);
+  const [selectedMedicine, setSelectedMedicine] = useState<Medicine | null>(null)
 
   const handleEditClick = (medicine: Medicine) => {
     setSelectedMedicine(medicine), setEditDialogOpen(true)
@@ -41,10 +43,10 @@ export default function MedicinesPage(): JSX.Element {
     }
   )
 
-  const { data: medicines, isLoading: isMedicinesLoading, error: medicinesError } = useQuery<Medicine[], Error>(
+  const { data: medicines, isLoading: isMedicinesLoading, error: medicinesError, refetch } = useQuery<Medicine[], Error>(
     {
       queryKey: ['getMedicines'],
-      queryFn: findAllMedicines,
+      queryFn: () => findAllMedicines(searchParams),
       refetchOnWindowFocus: false
     }
   )
@@ -99,6 +101,8 @@ export default function MedicinesPage(): JSX.Element {
 
   const onSearchClick = (values: any) => {
     console.log(values)
+    setSearchParams(values)
+    refetch()
   }
 
   const professionals = users?.map((user: User) => ({ id: user.id, label: user.username }) as SelectorValue) ?? []

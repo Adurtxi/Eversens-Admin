@@ -52,8 +52,7 @@ export const putEntity = <T>(endpoint: string, data: any) => apiService<T>(endpo
 export const deleteEntity = <T>(endpoint: string) => apiService<T>(endpoint, 'DELETE')
 
 export const toQueryString = (params: Record<string, any>) => {
-  console.log(params)
-  return Object.keys(params)
+  return '?' + Object.keys(params)
     .map(key => key + '=' + encodeURIComponent(params[key]))
     .join('&');
 }

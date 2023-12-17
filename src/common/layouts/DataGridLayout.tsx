@@ -6,6 +6,20 @@ import { useTranslation } from 'react-i18next'
 import MyDataGrid from '../components/data-grid/DataGrid'
 import Filters, { Filter } from '../components/filters/Filters'
 
+interface DataGridConfig {
+  rows: any[]
+  columns: any[]
+  actions: any[]
+  error: Error | null
+  isLoading: boolean
+}
+
+interface FiltersConfig {
+  filters: (Filter | { divider: boolean })[],
+  isLoading: boolean,
+  error: Error | null
+}
+
 interface DataGridLayoutProps {
   pageName: string
   button: {
@@ -15,28 +29,17 @@ interface DataGridLayoutProps {
     disabled?: boolean
   }
   onSearchClick: (values: { [x: string]: string | number | boolean | Date | null }) => void
-  filtersConfig: {
-    filters: (Filter | { divider: boolean })[],
-    isLoading: boolean,
-    error: Error | null
-  }
-  dataGridConfig: {
-    rows: any[]
-    columns: any[]
-    actions: any[]
-    error: Error | null
-    isLoading: boolean
-  }
+  filtersConfig?: FiltersConfig
+  dataGridConfig: DataGridConfig
 }
 
 export default function DataGridLayout({ pageName, button, filtersConfig, dataGridConfig, onSearchClick }: DataGridLayoutProps): JSX.Element {
   const { t } = useTranslation()
 
   const { rows, columns, actions, error, isLoading: isDataGridLoading } = dataGridConfig
-  const { filters, isLoading: isFiltersLoading } = filtersConfig
 
   const [selectedFilters, setSelectedFilters] = useState<Filter[] | []>(
-    filters.filter((x: Filter | { divider: boolean }) => 'static' in x && x.static && x) as Filter[] ?? []
+    filtersConfig?.filters.filter((x: Filter | { divider: boolean }) => 'static' in x && x.static && x) as Filter[] ?? []
   )
 
   const handleUpdateSelectedFilters = (filter: Filter): void => {
@@ -65,23 +68,24 @@ export default function DataGridLayout({ pageName, button, filtersConfig, dataGr
     <Container sx={{ mt: 3 }}>
       <Stack direction='row' alignItems='center' justifyContent='space-between' mb={4}>
         <Typography variant='h4'>{pageName}</Typography>
-        <Button variant='contained' startIcon={button.icon} onClick={button.onButtonClick} disabled={button.disabled}>
+        <Button variant='contained' color='secondary' startIcon={button.icon} onClick={button.onButtonClick} disabled={button.disabled}>
           {button.text}
         </Button>
       </Stack>
 
-      <Stack direction='row' alignItems='center' justifyContent='space-between' mb={1}>
+      {filtersConfig && <Stack direction='row' alignItems='center' justifyContent='space-between' mb={1}>
         <Filters
-          filters={filters}
-          isFiltersLoading={isFiltersLoading}
+          filters={filtersConfig.filters}
+          isFiltersLoading={filtersConfig.isLoading}
           selectedFilters={selectedFilters}
           handleFilterDelete={handleFilterDelete}
           handleUpdateSelectedFilters={handleUpdateSelectedFilters}
         />
-        <Button variant='contained' color='secondary' startIcon={<IconSearch />} onClick={handleOnSearchClick} disabled={isDataGridLoading}>
+        <Button variant='contained' color='primary' startIcon={<IconSearch />} onClick={handleOnSearchClick} disabled={isDataGridLoading}>
           {t('common.search')}
         </Button>
       </Stack>
+      }
       <Card sx={{ p: 1 }}>
         <MyDataGrid rows={rows} columns={columns} actions={actions} error={error} isLoading={isDataGridLoading} />
       </Card>

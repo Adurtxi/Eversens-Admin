@@ -13,7 +13,6 @@ export default function UsersPage(): JSX.Element {
         icon: <Add />,
         onButtonClick: () => console.log('Nuevo usuario'),
       }}
-      filters={[<div>Users Page</div>]} 
       onSearchClick={() => console.log('Search')} 
       dataGridConfig={{
         rows: [],
