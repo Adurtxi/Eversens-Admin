@@ -53,8 +53,8 @@ export default function DataGridLayout({ pageName, button, filtersConfig, dataGr
 
   const handleFilterDelete = (key: string): void => {
     setSelectedFilters(
-      selectedFilters.filter((filter: Filter) => filter.key !== key
-      ))
+      selectedFilters.filter((filter: Filter) => filter.key !== key)
+    )
   }
   const handleOnSearchClick = () => {
     const filterValues = selectedFilters.reduce(

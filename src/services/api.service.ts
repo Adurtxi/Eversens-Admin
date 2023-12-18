@@ -54,7 +54,7 @@ export const deleteEntity = <T>(endpoint: string) => apiService<T>(endpoint, 'DE
 export const toQueryString = (params: Record<string, any>) => {
   return '?' + Object.keys(params)
     .map(key => key + '=' + encodeURIComponent(params[key]))
-    .join('&');
+    .join('&')
 }
 
 export default apiService

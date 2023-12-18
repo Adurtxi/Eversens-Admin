@@ -43,9 +43,9 @@ export default function MedicinesPage(): JSX.Element {
     }
   )
 
-  const { data: medicines, isLoading: isMedicinesLoading, error: medicinesError, refetch } = useQuery<Medicine[], Error>(
+  const { data: medicines, isLoading: isMedicinesLoading, error: medicinesError } = useQuery<Medicine[], Error>(
     {
-      queryKey: ['getMedicines'],
+      queryKey: ['getMedicines', searchParams],
       queryFn: () => findAllMedicines(searchParams),
       refetchOnWindowFocus: false
     }
@@ -100,9 +100,7 @@ export default function MedicinesPage(): JSX.Element {
   }))
 
   const onSearchClick = (values: any) => {
-    console.log(values)
     setSearchParams(values)
-    refetch()
   }
 
   const professionals = users?.map((user: User) => ({ id: user.id, label: user.username }) as SelectorValue) ?? []
@@ -130,22 +128,22 @@ export default function MedicinesPage(): JSX.Element {
     { divider: true },
     {
       new: true,
-      key: 'createdBy',
+      key: 'createdById',
       label: t('medicines.filters.created_by'),
       type: 'select',
       selectorValues: professionals,
-      urlKey: 'createdBy',
+      urlKey: 'createdById',
       value: '',
       icon: <IconUserPlus />,
       static: false
     },
     {
       new: true,
-      key: 'updatedBy',
+      key: 'updatedById',
       label: t('medicines.filters.updated_by'),
       type: 'select',
       selectorValues: professionals,
-      urlKey: 'updatedBy',
+      urlKey: 'updatedById',
       value: '',
       icon: <IconUserCheck />,
       static: false
