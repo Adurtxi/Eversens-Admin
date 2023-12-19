@@ -9,12 +9,13 @@ import { GridAction, ExtendedGridColDef } from '@/common/components/data-grid/Da
 import { Medicine } from '@/interfaces/backend/medicine'
 import { findAllMedicines } from '@/services/medicine/medicine.service'
 import { NewMedicineDialog } from './components/NewMedicineDialog'
-import { useQuery } from '@tanstack/react-query'
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import { EditMedicineDialog } from './components/EditMedicineDialog'
 import { Filter } from '@/common/components/filters/Filters'
 import { User } from '@/interfaces/backend/user'
 import { findAllUsers } from '@/services/user/user.service'
 import { SelectorValue } from '@/common/components/dialog/FilterFieldDialog'
+import { Button } from '@mui/material'
 
 export default function MedicinesPage(): JSX.Element {
   const [searchParams, setSearchParams] = useState<Record<string, any> | any>({})
@@ -39,17 +40,29 @@ export default function MedicinesPage(): JSX.Element {
     {
       queryKey: ['getUsers'],
       queryFn: () => findAllUsers({}),
-      refetchOnWindowFocus: false
+      refetchOnWindowFocus: false,
     }
   )
 
-  const { data: medicines, isLoading: isMedicinesLoading, error: medicinesError } = useQuery<Medicine[], Error>(
+  const { 
+    data, 
+    isLoading: isMedicinesLoading, 
+    error: medicinesError,
+    fetchNextPage,
+    // fetchPreviousPage,
+    hasNextPage,
+    // hasPreviousPage,
+  } = useInfiniteQuery<{ medicines: Medicine[], nextPage?: number }>(
     {
       queryKey: ['getMedicines', searchParams],
-      queryFn: () => findAllMedicines(searchParams),
-      refetchOnWindowFocus: false
+      queryFn: ({ pageParam }: any) => findAllMedicines(pageParam, searchParams),
+      refetchOnWindowFocus: false,
+      getNextPageParam: (lastPage) => lastPage.nextPage,
+      initialPageParam: undefined,
     }
   )
+
+  const medicines = data?.pages.flatMap((page) => page.medicines)  ?? []
 
   const actions: GridAction[] = [
     {
@@ -194,6 +207,7 @@ export default function MedicinesPage(): JSX.Element {
 
   return (
     <>
+      <Button onClick={() => fetchNextPage()} disabled={!hasNextPage}>Fetch Next Page</Button>
       <DataGridLayout
         onSearchClick={onSearchClick}
         pageName={t('medicines.medicines')}

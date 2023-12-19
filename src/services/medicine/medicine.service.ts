@@ -1,8 +1,21 @@
 import { Medicine } from '@/interfaces/backend/medicine'
 import { getEntity, postEntity, putEntity, toQueryString } from '../api.service'
 
-export const findAllMedicines = async (params: Record<string, any>): Promise<Medicine[]> => {
-  return await getEntity<Medicine[]>('admin/medicines' + toQueryString(params))
+interface Pagination {
+  CurrentPage: number
+  TotalPageCount: number
+}
+
+export const findAllMedicines = async (pageNumber: number, params: Record<string, any>): Promise<{ medicines: Medicine[], nextPage?: number }> => {
+  if (pageNumber) params = { ...params, pageNumber }
+  params = { ...params, pageSize: 5 }
+
+  const { data, pagination } = await getEntity<{ data: Medicine[], pagination: Pagination }>('admin/medicines' + toQueryString(params))
+
+  return {
+    medicines: data,
+    nextPage: pagination.CurrentPage < pagination.TotalPageCount ? pagination.CurrentPage + 1 : undefined,
+  }
 }
 
 export const postMedicine = async ({ name }: Medicine): Promise<string> => {

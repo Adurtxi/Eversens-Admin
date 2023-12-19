@@ -38,7 +38,14 @@ const apiService = async <T>(
   }
 
   const contentType = response.headers.get('content-type')
+  const pagination = response.headers.get('X-Pagination')
 
+  if (pagination) {
+    return {
+      data: await response.json() as T,
+      pagination: JSON.parse(pagination),
+    } as unknown as T
+  }
   if (contentType && contentType.includes('application/json')) {
     return response.json() as Promise<T>;
   } else {
