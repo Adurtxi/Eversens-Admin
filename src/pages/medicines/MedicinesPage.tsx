@@ -1,4 +1,3 @@
-import { Button } from '@mui/material'
 import { Add } from '@mui/icons-material'
 import { useTranslation } from 'react-i18next'
 
@@ -18,9 +17,9 @@ import { useUsersQuery } from './hooks/useUsersQuery'
 export default function MedicinesPage(): JSX.Element {
   const { t } = useTranslation()
 
-  const { 
+  const {
     searchParams, setSearchParams, createDialogOpen, handleCreateDialogOpen,
-    handleCreateDialogClose, editDialogOpen, selectedMedicine, handleEditClick, handleEditDialogClose 
+    handleCreateDialogClose, editDialogOpen, selectedMedicine, handleEditClick, handleEditDialogClose
   } = useDialogs()
 
   const { actions } = useActions(handleEditClick)
@@ -41,15 +40,15 @@ export default function MedicinesPage(): JSX.Element {
     inUse: true,
   }))
 
-  const onSearchClick = (values: any) => setSearchParams(values)
+  const handleSearch = (values: any) => setSearchParams(values)
 
   return (
     <>
-      <Button onClick={() => fetchNextPage()} disabled={!hasNextPage}>Cargar más datos</Button>
       <DataGridLayout
-        onSearchClick={onSearchClick}
+        pagination={{ fetchNextPage, hasNextPage }}
+        handleSearch={handleSearch}
         pageName={t('medicines.medicines')}
-        button={{
+        primaryActionButton={{
           text: t('medicines.add_medicine'),
           icon: <Add />,
           onButtonClick: handleCreateDialogOpen,

@@ -4,7 +4,7 @@ import { IconSearch } from '@tabler/icons-react'
 import { useTranslation } from 'react-i18next'
 
 import MyDataGrid from '../components/data-grid/DataGrid'
-import Filters, { Filter } from '../components/filters/Filters'
+import Filters, { Filter, FilterGroup } from '../components/filters/Filters'
 
 interface DataGridConfig {
   rows: any[]
@@ -15,31 +15,37 @@ interface DataGridConfig {
 }
 
 interface FiltersConfig {
-  filters: (Filter | { divider: boolean })[],
+  filters: FilterGroup[],
   isLoading: boolean,
   error: Error | null
 }
 
 interface DataGridLayoutProps {
   pageName: string
-  button: {
+  primaryActionButton: {
     text: string
     icon: ReactElement
     onButtonClick: () => void
     disabled?: boolean
   }
-  onSearchClick: (values: { [x: string]: string | number | boolean | Date | null }) => void
+  handleSearch: (values: { [x: string]: string | number | boolean | Date | null }) => void
+  pagination?: {
+    fetchNextPage: () => void
+    hasNextPage: boolean
+  }
   filtersConfig?: FiltersConfig
   dataGridConfig: DataGridConfig
 }
 
-export default function DataGridLayout({ pageName, button, filtersConfig, dataGridConfig, onSearchClick }: DataGridLayoutProps): JSX.Element {
+export default function DataGridLayout({ pageName, primaryActionButton, filtersConfig, dataGridConfig, handleSearch, pagination }: DataGridLayoutProps): JSX.Element {
   const { t } = useTranslation()
 
   const { rows, columns, actions, error, isLoading: isDataGridLoading } = dataGridConfig
 
   const [selectedFilters, setSelectedFilters] = useState<Filter[] | []>(
-    filtersConfig?.filters.filter((x: Filter | { divider: boolean }) => 'static' in x && x.static && x) as Filter[] ?? []
+    filtersConfig?.filters
+      .flatMap(x => x.filters)
+      .filter((x: Filter | { divider: boolean }) => 'static' in x && x.static && x) ?? []
   )
 
   const handleUpdateSelectedFilters = (filter: Filter): void => {
@@ -56,20 +62,22 @@ export default function DataGridLayout({ pageName, button, filtersConfig, dataGr
       selectedFilters.filter((filter: Filter) => filter.key !== key)
     )
   }
-  const handleOnSearchClick = () => {
+  const handleSearchClick = () => {
     const filterValues = selectedFilters.reduce(
       (acc, filter: Filter) => ({ ...acc, [filter.urlKey]: filter.value }),
       {} as { [key: string]: string | number | boolean | Date | null }
     )
-    onSearchClick(filterValues)
+    handleSearch(filterValues)
   }
+
+  const { icon: primaryIcon, onButtonClick: handlePrimaryClick, disabled: isPrimaryDisabled, text: primaryText } = primaryActionButton
 
   return (
     <Container sx={{ mt: 3 }}>
       <Stack direction='row' alignItems='center' justifyContent='space-between' mb={4}>
         <Typography variant='h4'>{pageName}</Typography>
-        <Button variant='contained' color='secondary' startIcon={button.icon} onClick={button.onButtonClick} disabled={button.disabled}>
-          {button.text}
+        <Button variant='contained' color='secondary' startIcon={primaryIcon} onClick={handlePrimaryClick} disabled={isPrimaryDisabled}>
+          {primaryText}
         </Button>
       </Stack>
 
@@ -81,13 +89,13 @@ export default function DataGridLayout({ pageName, button, filtersConfig, dataGr
           handleFilterDelete={handleFilterDelete}
           handleUpdateSelectedFilters={handleUpdateSelectedFilters}
         />
-        <Button variant='contained' color='primary' startIcon={<IconSearch />} onClick={handleOnSearchClick} disabled={isDataGridLoading}>
+        <Button variant='contained' color='primary' startIcon={<IconSearch />} onClick={handleSearchClick} disabled={isDataGridLoading}>
           {t('common.search')}
         </Button>
       </Stack>
       }
       <Card sx={{ p: 1 }}>
-        <MyDataGrid rows={rows} columns={columns} actions={actions} error={error} isLoading={isDataGridLoading} />
+        <MyDataGrid rows={rows} columns={columns} actions={actions} error={error} isLoading={isDataGridLoading} pagination={pagination}/>
       </Card>
     </Container>
   )

@@ -8,18 +8,18 @@ export default function UsersPage(): JSX.Element {
   return (
     <DataGridLayout
       pageName={t('users.users')}
-      button={{
+      primaryActionButton={{
         text: t('users.add_user'),
         icon: <Add />,
         onButtonClick: () => console.log('Nuevo usuario'),
       }}
-      onSearchClick={() => console.log('Search')} 
+      handleSearch={() => console.log('Search')} 
       dataGridConfig={{
         rows: [],
         columns: [],
         actions: [],
         error: null,
         isLoading: false
-      }}    />
+      }} />
   )
 }

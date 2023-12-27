@@ -1,5 +1,5 @@
-import { Box, LinearProgress, useTheme } from '@mui/material'
-import { DataGrid, GridCellParams, GridColDef, GridRowParams, esES } from '@mui/x-data-grid'
+import { Box, Button, LinearProgress, Stack, useTheme } from '@mui/material'
+import { DataGrid, GridCellParams, GridColDef, GridFooter, GridRowParams, esES } from '@mui/x-data-grid'
 import { ReactElement, useMemo } from 'react'
 import MyDataGridActionButton from './extensions/DataGridActionButton'
 import { useTranslation } from 'react-i18next'
@@ -27,6 +27,10 @@ interface DataTableProps {
   actions: GridAction[],
   error: Error | null,
   isLoading: boolean,
+  pagination?: {
+    fetchNextPage: () => void
+    hasNextPage: boolean
+  }
 }
 
 const RenderCell = ({ params, column }: any) => {
@@ -46,9 +50,7 @@ const RenderCell = ({ params, column }: any) => {
   );
 }
 
-
-
-export default function MyDataGrid({ rows = [], columns, actions, error, isLoading }: DataTableProps) {
+export default function MyDataGrid({ rows = [], columns, actions, error, isLoading, pagination }: DataTableProps) {
   const { t } = useTranslation()
   // const [selectionModel, setSelectionModel] = useState<GridRowId[]>([])
 
@@ -99,7 +101,13 @@ export default function MyDataGrid({ rows = [], columns, actions, error, isLoadi
     {t('datagrid.error')} {error.message}
   </Box>
 
-  // if (rows.length === 0) return <Box>Sin datos</Box>
+  const customFooter = () => {
+    return <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
+      <Box/>
+      { pagination && <Button onClick={pagination.fetchNextPage} disabled={!pagination.hasNextPage}>{t('common.load_more')}</Button> }
+      <GridFooter />
+    </Stack>
+  }
 
   return (
     <DataGrid
@@ -126,7 +134,9 @@ export default function MyDataGrid({ rows = [], columns, actions, error, isLoadi
       slots={{
         loadingOverlay: LinearProgress,
         noRowsOverlay: CustomNoRowsOverlay,
-        noResultsOverlay: CustomNoFilterRowsOverlay
+        noResultsOverlay: CustomNoFilterRowsOverlay,
+        footer: customFooter,
+
       }}
     // filterMode="server"
     // onFilterModelChange={onFilterChange}

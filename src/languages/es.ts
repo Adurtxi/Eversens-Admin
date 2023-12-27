@@ -22,6 +22,7 @@ export const es = {
       required: 'Requerido',
       optional: 'Opcional',
       loading: 'Cargando...',
+      load_more: 'Cargar más',
     },
     datagrid: {
       loading: 'Cargando...',
