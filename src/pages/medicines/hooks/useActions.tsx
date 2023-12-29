@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 
 import { GridAction } from '@/common/components/data-grid/DataGrid'
 
-export const useActions = (handleEditClick: (row: any) => void): { actions: GridAction[] } => {
+export const useActions = (handleEditDialogOpen: (row: any) => void): { actions: GridAction[] } => {
   const { t } = useTranslation();
 
   return { actions: [
@@ -20,7 +20,7 @@ export const useActions = (handleEditClick: (row: any) => void): { actions: Grid
       icon: <IconEdit />,
       name: t('medicines.datagrid.actions.edit'),
       isVisible: (): boolean => true,
-      onClick: handleEditClick
+      onClick: handleEditDialogOpen
     },
     {
       icon: <IconTrash />,

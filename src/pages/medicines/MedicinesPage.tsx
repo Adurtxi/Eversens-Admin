@@ -19,11 +19,11 @@ export default function MedicinesPage(): JSX.Element {
 
   const {
     searchParams, setSearchParams, createDialogOpen, handleCreateDialogOpen,
-    handleCreateDialogClose, editDialogOpen, selectedMedicine, handleEditClick, handleEditDialogClose
+    handleCreateDialogClose, editDialogOpen, selectedMedicine, handleEditDialogOpen, handleEditDialogClose
   } = useDialogs()
 
-  const { actions } = useActions(handleEditClick)
-  const { columns } = useColumns()
+  const { actions } = useActions(handleEditDialogOpen)
+  const { columns } = useColumns(handleEditDialogOpen)
 
   const { users, isUsersLoading, usersError } = useUsersQuery()
 

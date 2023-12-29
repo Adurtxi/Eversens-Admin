@@ -19,11 +19,11 @@ export default function UsersPage(): JSX.Element {
 
   const {
     searchParams, setSearchParams, createDialogOpen, handleCreateDialogOpen,
-    handleCreateDialogClose, editDialogOpen, selectedUser, handleEditClick, handleEditDialogClose
+    handleCreateDialogClose, editDialogOpen, selectedUser, handleEditDialogOpen, handleEditDialogClose
   } = useDialogs()
 
-  const { actions } = useActions(handleEditClick)
-  const { columns } = useColumns()
+  const { actions } = useActions(handleEditDialogOpen)
+  const { columns } = useColumns(handleEditDialogOpen)
 
   const { professionalUsers, isProfessionalUsersLoading, professionalUsersError } = useProfessionalUsersQuery()
 

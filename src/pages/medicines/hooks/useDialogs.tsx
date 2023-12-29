@@ -10,7 +10,7 @@ interface UseDialogs {
   handleCreateDialogClose: () => void
   editDialogOpen: boolean
   selectedMedicine: Medicine | null
-  handleEditClick: (medicine: Medicine) => void
+  handleEditDialogOpen: (medicine: Medicine) => void
   handleEditDialogClose: () => void
 }
 
@@ -24,7 +24,7 @@ export const useDialogs = (): UseDialogs => {
   const [editDialogOpen, setEditDialogOpen] = useState(false)
   const [selectedMedicine, setSelectedMedicine] = useState<Medicine | null>(null)
 
-  const handleEditClick = (medicine: Medicine) => {
+  const handleEditDialogOpen = (medicine: Medicine) => {
     setSelectedMedicine(medicine)
     setEditDialogOpen(true)
   }
@@ -41,7 +41,7 @@ export const useDialogs = (): UseDialogs => {
     handleCreateDialogClose,
     editDialogOpen,
     selectedMedicine,
-    handleEditClick,
+    handleEditDialogOpen,
     handleEditDialogClose,
   }
 }

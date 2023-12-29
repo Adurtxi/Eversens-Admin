@@ -1,10 +1,11 @@
 import { Button, Card, Container, Stack, Typography } from '@mui/material'
-import { ReactElement, useState } from 'react'
+import { ReactElement } from 'react'
 import { IconSearch } from '@tabler/icons-react'
 import { useTranslation } from 'react-i18next'
 
 import MyDataGrid from '../components/data-grid/DataGrid'
-import Filters, { Filter, FilterGroup } from '../components/filters/Filters'
+import Filters from '../components/filters/Filters'
+import { FiltersConfig, useFilters } from './hooks/useFilters'
 
 interface DataGridConfig {
   rows: any[]
@@ -12,12 +13,6 @@ interface DataGridConfig {
   actions: any[]
   error: Error | null
   isLoading: boolean
-}
-
-interface FiltersConfig {
-  filters: FilterGroup[],
-  isLoading: boolean,
-  error: Error | null
 }
 
 interface DataGridLayoutProps {
@@ -41,36 +36,9 @@ export default function DataGridLayout({ pageName, primaryActionButton, filtersC
   const { t } = useTranslation()
 
   const { rows, columns, actions, error, isLoading: isDataGridLoading } = dataGridConfig
-
-  const [selectedFilters, setSelectedFilters] = useState<Filter[] | []>(
-    filtersConfig?.filters
-      .flatMap(x => x.filters)
-      .filter((x: Filter | { divider: boolean }) => 'static' in x && x.static && x) ?? []
-  )
-
-  const handleUpdateSelectedFilters = (filter: Filter): void => {
-    if (!filter.new)
-      setSelectedFilters(selectedFilters.map((selectedFilter: Filter) => selectedFilter.key === filter.key ? filter : selectedFilter))
-    else {
-      filter.new = false
-      setSelectedFilters([...selectedFilters, filter])
-    }
-  }
-
-  const handleFilterDelete = (key: string): void => {
-    setSelectedFilters(
-      selectedFilters.filter((filter: Filter) => filter.key !== key)
-    )
-  }
-  const handleSearchClick = () => {
-    const filterValues = selectedFilters.reduce(
-      (acc, filter: Filter) => ({ ...acc, [filter.urlKey]: filter.value }),
-      {} as { [key: string]: string | number | boolean | Date | null }
-    )
-    handleSearch(filterValues)
-  }
-
   const { icon: primaryIcon, onButtonClick: handlePrimaryClick, disabled: isPrimaryDisabled, text: primaryText } = primaryActionButton
+
+  const { selectedFilters, handleFilterDelete, handleUpdateSelectedFilters, handleSearchClick } = useFilters({filtersConfig, handleSearch})
 
   return (
     <Container sx={{ mt: 3 }}>

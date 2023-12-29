@@ -10,7 +10,7 @@ interface UseDialogs {
   handleCreateDialogClose: () => void
   editDialogOpen: boolean
   selectedUser: User | null
-  handleEditClick: (user: User) => void
+  handleEditDialogOpen: (user: User) => void
   handleEditDialogClose: () => void
 }
 
@@ -24,7 +24,7 @@ export const useDialogs = (): UseDialogs => {
   const [editDialogOpen, setEditDialogOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
 
-  const handleEditClick = (user: User) => {
+  const handleEditDialogOpen = (user: User) => {
     setSelectedUser(user)
     setEditDialogOpen(true)
   }
@@ -41,7 +41,7 @@ export const useDialogs = (): UseDialogs => {
     handleCreateDialogClose,
     editDialogOpen,
     selectedUser,
-    handleEditClick,
+    handleEditDialogOpen,
     handleEditDialogClose,
   }
 }

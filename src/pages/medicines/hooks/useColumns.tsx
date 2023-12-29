@@ -1,9 +1,9 @@
 import { GridRowParams } from '@mui/x-data-grid'
 import { useTranslation } from 'react-i18next'
 
-import { ExtendedGridColDef } from '@/common/components/data-grid/DataGrid';
+import { ExtendedGridColDef } from '@/common/components/data-grid/DataGrid'
 
-export const useColumns = (): { columns: ExtendedGridColDef[] } => {
+export const useColumns = (handleEditDialogOpen: (medicine: any) => void): { columns: ExtendedGridColDef[] } => {
   const { t } = useTranslation()
 
   const columns: ExtendedGridColDef[] = [
@@ -12,7 +12,7 @@ export const useColumns = (): { columns: ExtendedGridColDef[] } => {
       headerName: t('medicines.datagrid.columns.name'),
       flex: 2,
       hasAction: true,
-      action: (row: GridRowParams) => console.log('Action Columna ID', row),
+      action: (params: GridRowParams) => handleEditDialogOpen(params.row),
     },
     { field: 'createdAt', valueType: 'datetime', headerName: t('medicines.datagrid.columns.created_at'), flex: 1 },
     { field: 'updatedAt', valueType: 'datetime', headerName: t('medicines.datagrid.columns.updated_at'), flex: 1 },
