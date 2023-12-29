@@ -64,4 +64,9 @@ export const toQueryString = (params: Record<string, any>) => {
     .join('&')
 }
 
+export interface Pagination {
+  CurrentPage: number
+  TotalPageCount: number
+}
+
 export default apiService

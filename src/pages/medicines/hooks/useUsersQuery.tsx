@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 
 import { User } from '@/interfaces/backend/user'
-import { findAllUsers } from '@/services/user/user.service'
+import { findAllProfessionalUsers } from '@/services/user/user.service'
 
 interface UseUsersQuery {
   users: User[]
@@ -13,7 +13,7 @@ export const useUsersQuery = (): UseUsersQuery => {
   const { data: users, isLoading: isUsersLoading, error: usersError } = useQuery<User[], Error>(
     {
       queryKey: ['getUsers'],
-      queryFn: () => findAllUsers({}),
+      queryFn: () => findAllProfessionalUsers({}),
       refetchOnWindowFocus: false,
     }
   )
